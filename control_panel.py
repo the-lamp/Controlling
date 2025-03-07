@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 @app.route("/")
 def home():
-    return "CyberTracker API is Running!"
+    return send_from_directory("static", "index.html")
 
 @app.route("/send_command", methods=["POST"])
 def send_command():
