@@ -41,6 +41,9 @@
             margin-top: 20px;
             white-space: pre-wrap;
             border-radius: 5px;
+            text-align: left;
+            max-width: 80%;
+            margin: auto;
         }
     </style>
 </head>
@@ -58,36 +61,54 @@
         <button onclick="makeCall()">📲 Make Call</button>
         <button onclick="changeWallpaper()">🖼 Change Wallpaper</button>
     </div>
-    <div id="output"></div>
+    
+    <h2>📋 Output</h2>
+    <div id="output">Click a button to see results...</div>
 
     <script>
         const SERVER_URL = "https://your-app.onrender.com"; // Replace with your actual Render URL
 
-        function sendCommand(action, params = {}) {
-            fetch(SERVER_URL + "/send_command", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action, params })
-            })
-            .then(response => response.json())
-            .then(data => document.getElementById("output").innerText = JSON.stringify(data, null, 2))
-            .catch(error => console.error("Error:", error));
+        async function sendCommand(action, params = {}) {
+            try {
+                let response = await fetch(SERVER_URL + "/send_command", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action, params })
+                });
+                let data = await response.json();
+                document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("output").innerText = "❌ Error connecting to the server!";
+            }
         }
 
         function sendSMS() {
             let number = prompt("Enter Phone Number:");
             let message = prompt("Enter Message:");
-            sendCommand("send_sms", { number, message });
+            if (number && message) {
+                sendCommand("send_sms", { number, message });
+            } else {
+                alert("❌ Phone Number and Message are required!");
+            }
         }
 
         function makeCall() {
             let number = prompt("Enter Phone Number:");
-            sendCommand("make_call", { number });
+            if (number) {
+                sendCommand("make_call", { number });
+            } else {
+                alert("❌ Phone Number is required!");
+            }
         }
 
         function changeWallpaper() {
             let imageUrl = prompt("Enter Image URL:");
-            sendCommand("change_wallpaper", { url: imageUrl });
+            if (imageUrl) {
+                sendCommand("change_wallpaper", { url: imageUrl });
+            } else {
+                alert("❌ Image URL is required!");
+            }
         }
     </script>
 </body>
