@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberTracker Control Panel</title>
+</head>
+<body>
+    <h1>CyberTracker - Remote Control Panel</h1>
+    
+    <form action="/send_command" method="post">
+        <label>Command:</label>
+        <input type="text" name="action" required>
+        <label>Parameters (JSON Format):</label>
+        <input type="text" name="params">
+        <button type="submit">Send Command</button>
+    </form>
+
+    <button onclick="fetchStatus()">Get Device Status</button>
+    <pre id="status"></pre>
+
+    <script>
+        function fetchStatus() {
+            fetch("/get_status")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("status").innerText = JSON.stringify(data, null, 2);
+                });
+        }
+    </script>
+</body>
+</html>
